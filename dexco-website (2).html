@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DexCo — Dexterity Corporation | AI, Automation &amp; Custom Software</title>
+<meta name="description" content="Dexterity Corporation (DexCo) is an engineering-led studio building AI, automation, and custom software solutions that work in production — not prototypes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F6F2;
+    --surface:#FFFFFF;
+    --surface-2:#F0EEE8;
+    --ink:#181D2A;
+    --muted:#6B7280;
+    --copper:#C9814F;
+    --copper-deep:#A85F2A;
+    --teal:#3F8F82;
+    --line:rgba(24,29,42,0.10);
+    --line-bright:rgba(24,29,42,0.18);
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  a{color:inherit;text-decoration:none;cursor:pointer;}
+  button{font-family:inherit;cursor:pointer;}
+  ::selection{background:var(--copper);color:#fff;}
+
+  .grid-bg{
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:48px 48px;
+    opacity:0.6;
+    pointer-events:none;
+    z-index:0;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+  }
+
+  .container{max-width:1120px;margin:0 auto;padding:0 32px;position:relative;z-index:1;}
+
+  /* Nav */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(247,246,242,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{max-width:1120px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:1.15rem;}
+  .logo-sub{font-family:var(--font-mono);font-size:0.62rem;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;display:block;margin-top:1px;font-weight:400;}
+  .nav-links{display:flex;align-items:center;gap:36px;}
+  .nav-links a{font-size:0.9rem;color:var(--muted);transition:color 0.2s ease;}
+  .nav-links a.active,.nav-links a:hover{color:var(--ink);}
+  .nav-cta{font-family:var(--font-mono);font-size:0.78rem;color:#fff !important;background:var(--copper);padding:9px 18px;border-radius:100px;transition:background 0.2s ease;}
+  .nav-cta:hover{background:var(--copper-deep) !important;}
+  .nav-toggle{display:none;background:none;border:none;color:var(--ink);font-size:1.5rem;}
+
+  main{position:relative;z-index:1;padding-top:88px;}
+  .page{display:none;animation:fadeInPage 0.4s ease;}
+  .page.active{display:block;}
+  @keyframes fadeInPage{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  section{position:relative;z-index:1;padding:80px 0;}
+  section.first{padding-top:70px;}
+  .eyebrow{font-family:var(--font-mono);font-size:0.75rem;color:var(--copper-deep);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+  .eyebrow::before{content:'';width:22px;height:1px;background:var(--copper-deep);}
+  h1{font-family:var(--font-display);font-weight:700;font-size:clamp(2.4rem,6vw,4.4rem);line-height:1.05;letter-spacing:-0.02em;max-width:820px;margin-bottom:24px;}
+  h1 span{color:var(--copper-deep);}
+  h2{font-family:var(--font-display);font-weight:600;font-size:clamp(1.7rem,3.2vw,2.4rem);letter-spacing:-0.01em;margin-bottom:18px;max-width:640px;}
+  .lede{color:var(--muted);font-size:1.05rem;max-width:640px;}
+
+  .status-line{font-family:var(--font-mono);font-size:0.78rem;color:var(--teal);letter-spacing:0.08em;display:flex;align-items:center;gap:10px;margin-bottom:26px;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px rgba(63,143,130,0.5);animation:pulse 2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+
+  .hero-sub{font-size:1.1rem;color:var(--muted);max-width:600px;margin-bottom:40px;}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:56px;}
+  .btn{font-family:var(--font-mono);font-size:0.82rem;padding:14px 26px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s ease;border:1px solid transparent;}
+  .btn-primary{background:var(--copper);color:#fff;}
+  .btn-primary:hover{background:var(--copper-deep);transform:translateY(-1px);}
+  .btn-ghost{border:1px solid var(--line-bright);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--copper);color:var(--copper-deep);}
+
+  .hero-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;border-top:1px solid var(--line);padding-top:26px;max-width:820px;}
+  .hero-meta-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+  .hero-meta-value{font-family:var(--font-mono);font-size:0.92rem;}
+
+  .overview-body{font-size:1.1rem;max-width:720px;line-height:1.75;color:var(--ink);}
+  .overview-body strong{color:var(--copper-deep);font-weight:600;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px;}
+  .mini-card{display:block;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;transition:all 0.2s ease;box-shadow:0 1px 2px rgba(24,29,42,0.03);}
+  .mini-card:hover{border-color:var(--copper);box-shadow:0 8px 20px rgba(24,29,42,0.07);transform:translateY(-2px);}
+  .mini-card .title{font-family:var(--font-display);font-weight:600;font-size:1.1rem;margin-bottom:8px;}
+  .mini-card .desc{font-size:0.88rem;color:var(--muted);}
+
+  /* Services list */
+  .board{position:relative;margin-top:44px;}
+  .component{
+    position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px;
+    width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:28px 30px;margin-bottom:14px;
+    box-shadow:0 1px 2px rgba(24,29,42,0.03);
+    transition:all 0.2s ease;
+  }
+  .component:hover{border-color:var(--copper);box-shadow:0 10px 26px rgba(24,29,42,0.08);transform:translateY(-2px);}
+  .component-body{min-width:0;}
+  .component-title{font-family:var(--font-display);font-weight:600;font-size:1.25rem;margin-bottom:8px;}
+  .component-desc{font-size:0.92rem;color:var(--muted);margin-bottom:12px;}
+  .view-link{font-family:var(--font-mono);font-size:0.78rem;color:var(--copper-deep);display:inline-flex;align-items:center;gap:6px;}
+  .component-arrow{flex-shrink:0;width:38px;height:38px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1rem;transition:all 0.2s ease;}
+  .component:hover .component-arrow{background:var(--copper);color:#fff;transform:translateX(3px);}
+
+  /* Why grid */
+  .why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:48px;}
+  .why-card{background:var(--surface);padding:30px 24px;}
+  .why-num{font-family:var(--font-mono);font-size:0.75rem;color:var(--copper-deep);margin-bottom:16px;}
+  .why-title{font-family:var(--font-display);font-weight:600;font-size:1.05rem;margin-bottom:8px;}
+  .why-desc{font-size:0.88rem;color:var(--muted);}
+
+  .tag-cloud{display:flex;flex-wrap:wrap;gap:10px;margin-top:36px;}
+  .tag{font-family:var(--font-mono);font-size:0.8rem;background:var(--surface);border:1px solid var(--line-bright);padding:9px 16px;border-radius:100px;transition:all 0.2s ease;}
+  .tag:hover{border-color:var(--copper);color:var(--copper-deep);}
+
+  .contact-panel{background:var(--surface);border:1px solid var(--line-bright);border-radius:16px;padding:48px;margin-top:44px;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;box-shadow:0 4px 20px rgba(24,29,42,0.04);}
+  .contact-panel h3{font-family:var(--font-display);font-size:1.5rem;font-weight:600;margin-bottom:14px;}
+  .contact-panel p{color:var(--muted);}
+  .contact-links{display:flex;flex-direction:column;gap:16px;}
+  .contact-row{display:flex;flex-direction:column;gap:4px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+  .contact-row:last-child{border-bottom:none;padding-bottom:0;}
+  .contact-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+  .contact-value{font-size:1.05rem;font-family:var(--font-mono);}
+  .contact-value a{color:var(--copper-deep);}
+  .contact-value a:hover{text-decoration:underline;}
+
+  footer{border-top:1px solid var(--line);padding:36px 0;position:relative;z-index:1;}
+  .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-inner span{font-family:var(--font-mono);font-size:0.78rem;color:var(--muted);}
+
+  /* Modal — modern popup */
+  .modal-overlay{
+    position:fixed;inset:0;z-index:200;
+    display:none;
+    align-items:center;justify-content:center;
+    padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(24,29,42,0.45);backdrop-filter:blur(6px);animation:fadeIn 0.2s ease;}
+  .modal-panel{
+    position:relative;
+    width:100%;max-width:560px;
+    max-height:85vh;overflow-y:auto;
+    background:var(--surface);
+    border-radius:20px;
+    padding:36px 40px 40px;
+    box-shadow:0 24px 70px rgba(24,29,42,0.22), 0 2px 10px rgba(24,29,42,0.06);
+    animation:popIn 0.25s cubic-bezier(0.16,1,0.3,1);
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes popIn{from{opacity:0;transform:translateY(14px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+
+  .modal-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;position:sticky;top:0;background:var(--surface);padding-top:2px;}
+  .modal-back{
+    display:inline-flex;align-items:center;gap:7px;
+    font-family:var(--font-mono);font-size:0.78rem;color:var(--muted);
+    background:var(--surface-2);border:1px solid var(--line);
+    padding:9px 16px 9px 12px;border-radius:100px;
+    transition:all 0.2s ease;
+  }
+  .modal-back:hover{color:var(--ink);border-color:var(--line-bright);background:#fff;}
+  .modal-close{
+    width:38px;height:38px;flex-shrink:0;border-radius:50%;
+    border:1px solid var(--line);background:var(--surface-2);color:var(--ink);
+    font-size:1rem;display:flex;align-items:center;justify-content:center;
+    transition:all 0.2s ease;
+  }
+  .modal-close:hover{background:var(--copper);color:#fff;border-color:var(--copper);transform:rotate(90deg);}
+
+  .modal-eyebrow{font-family:var(--font-mono);font-size:0.72rem;color:var(--copper-deep);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;}
+  .modal-title{font-family:var(--font-display);font-size:1.6rem;font-weight:600;margin-bottom:16px;line-height:1.2;}
+  .modal-detail{font-size:0.94rem;color:var(--muted);line-height:1.7;margin-bottom:24px;}
+  .modal-items{list-style:none;margin-bottom:30px;}
+  .modal-items li{display:flex;align-items:flex-start;gap:10px;font-size:0.9rem;padding:6px 0;}
+  .modal-items li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:7px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
+    html{scroll-behavior:auto;}
+  }
+
+  @media (max-width:900px){
+    .hero-meta{grid-template-columns:repeat(2,1fr);}
+    .why-grid{grid-template-columns:repeat(2,1fr);}
+    .card-grid{grid-template-columns:1fr 1fr;}
+    .contact-panel{grid-template-columns:1fr;padding:32px;}
+  }
+  @media (max-width:720px){
+    .nav-links{position:fixed;top:66px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start;padding:22px 32px;gap:18px;display:none;}
+    .nav-links.open{display:flex;}
+    .nav-toggle{display:block;}
+    .component{padding:22px;}
+    .why-grid{grid-template-columns:1fr;}
+    .card-grid{grid-template-columns:1fr;}
+    .modal-panel{padding:26px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <nav>
+    <a href="#home" class="logo" data-link>
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="28" height="28" rx="3" stroke="#C9814F" stroke-width="1.4"/>
+        <path d="M8 21V9H14.5C17.5 9 19.5 11.2 19.5 15C19.5 18.8 17.5 21 14.5 21H8Z" stroke="#181D2A" stroke-width="1.4" stroke-linejoin="round"/>
+        <circle cx="23" cy="15" r="1.6" fill="#3F8F82"/>
+        <path d="M19.5 15H23" stroke="#3F8F82" stroke-width="1.4"/>
+      </svg>
+      <span>DexCo<span class="logo-sub">Dexterity Corporation</span></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#home" data-link data-route="home">Home</a>
+      <a href="#services" data-link data-route="services">Services</a>
+      <a href="#why" data-link data-route="why">Why DexCo</a>
+      <a href="#contact" data-link data-route="contact" class="nav-cta">Get in touch</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <div class="page" id="page-home">
+    <section class="first">
+      <div class="container">
+        <div class="status-line">
+          <span class="status-dot"></span>
+          SYSTEMS ONLINE — AI · AUTOMATION · SOFTWARE
+        </div>
+        <h1>Innovation begins <span>here.</span></h1>
+        <p class="hero-sub">
+          DexCo is an engineering-led studio building AI, automation, and custom software solutions
+          for businesses that need systems that actually work in production — not prototypes.
+        </p>
+        <div class="hero-ctas">
+          <a href="#services" data-link class="btn btn-primary">View services →</a>
+          <a href="#contact" data-link class="btn btn-ghost">Get in touch</a>
+        </div>
+        <div class="hero-meta">
+          <div><div class="hero-meta-label">Founded</div><div class="hero-meta-value">2026</div></div>
+          <div><div class="hero-meta-label">Team size</div><div class="hero-meta-value">2–10 engineers</div></div>
+          <div><div class="hero-meta-label">Delivery</div><div class="hero-meta-value">Turnkey, end-to-end</div></div>
+          <div><div class="hero-meta-label">Based in</div><div class="hero-meta-value">Pakistan · Remote-friendly</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section style="border-top:1px solid var(--line);">
+      <div class="container">
+        <div class="eyebrow">Overview</div>
+        <p class="overview-body">
+          Dexterity Corporation (<strong>DexCo</strong>) is a team of critical-thinking engineers with deep
+          technical expertise, sharp troubleshooting skills, and a collaborative spirit. We work across
+          <strong>AI &amp; Machine Learning</strong>, <strong>Automation</strong>, and
+          <strong>Custom Software Development</strong> — delivering complete solutions end-to-end,
+          at competitive prices and with fast turnaround. We don't build demos. We build systems people
+          use every day.
+        </p>
+      </div>
+    </section>
+
+    <section style="border-top:1px solid var(--line);">
+      <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:10px;">
+          <h2 style="margin-bottom:0;">What we build</h2>
+          <a href="#services" data-link style="font-family:var(--font-mono);font-size:0.85rem;color:var(--copper-deep);">See all services →</a>
+        </div>
+        <div class="card-grid">
+          <a href="#services" data-link class="mini-card">
+            <div class="title">AI &amp; Machine Learning</div>
+            <div class="desc">RAG systems, chatbots, and local LLM deployment.</div>
+          </a>
+          <a href="#services" data-link class="mini-card">
+            <div class="title">Automation</div>
+            <div class="desc">RPA and ETL pipelines that run without you.</div>
+          </a>
+          <a href="#services" data-link class="mini-card">
+            <div class="title">Custom Software</div>
+            <div class="desc">Web, desktop, and cloud apps built around your workflow.</div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="page" id="page-services">
+    <section class="first">
+      <div class="container">
+        <div class="eyebrow">Services</div>
+        <h2>Five disciplines, one delivery team.</h2>
+        <p class="lede">Every engagement is turnkey — you bring the problem, we bring the full stack needed to solve it. Tap any service for the details.</p>
+
+        <div class="board">
+          <div id="servicesList"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- WHY DEXCO -->
+  <div class="page" id="page-why">
+    <section class="first">
+      <div class="container">
+        <div class="eyebrow">Why DexCo</div>
+        <h2>Built by engineers who ship, not just prototype.</h2>
+        <div class="why-grid">
+          <div class="why-card"><div class="why-num">01</div><div class="why-title">Production-grade</div><div class="why-desc">We build for real usage under real constraints, not one-off demos.</div></div>
+          <div class="why-card"><div class="why-num">02</div><div class="why-title">Turnkey delivery</div><div class="why-desc">One team, one point of contact, from architecture to deployment.</div></div>
+          <div class="why-card"><div class="why-num">03</div><div class="why-title">Competitive pricing</div><div class="why-desc">Lean team, direct delivery — no agency overhead passed on to you.</div></div>
+          <div class="why-card"><div class="why-num">04</div><div class="why-title">Fast turnaround</div><div class="why-desc">Small, senior team means fewer handoffs and quicker iteration.</div></div>
+        </div>
+      </div>
+    </section>
+    <section style="border-top:1px solid var(--line);">
+      <div class="container">
+        <div class="eyebrow">Specialties</div>
+        <h2>Where we work.</h2>
+        <div class="tag-cloud">
+          <span class="tag">Information Technology &amp; Services</span>
+          <span class="tag">Software Development</span>
+          <span class="tag">AI &amp; Automation Solutions</span>
+          <span class="tag">Enterprise Software &amp; AI Consulting</span>
+          <span class="tag">Digital Transformation &amp; AI Services</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="page" id="page-contact">
+    <section class="first">
+      <div class="container">
+        <div class="eyebrow">Contact</div>
+        <h2>Have a system that needs building?</h2>
+        <div class="contact-panel">
+          <div>
+            <h3>Let's talk about it.</h3>
+            <p>Tell us what's broken, manual, or missing — we'll tell you how we'd build it, at a fixed price and a clear timeline.</p>
+          </div>
+          <div class="contact-links">
+            <div class="contact-row">
+              <span class="contact-label">Phone</span>
+              <span class="contact-value"><a href="tel:+923421898549">+92 342 1898549</a></span>
+            </div>
+            <div class="contact-row">
+              <span class="contact-label">Email</span>
+              <span class="contact-value"><a href="mailto:armalik.muhammad@gmail.com">armalik.muhammad@gmail.com</a></span>
+            </div>
+            <div class="contact-row">
+              <span class="contact-label">LinkedIn</span>
+              <span class="contact-value"><a href="https://www.linkedin.com/company/dexterity-corporation" target="_blank" rel="noopener">linkedin.com/company/dexterity-corporation</a></span>
+            </div>
+            <div class="contact-row">
+              <span class="contact-label">Availability</span>
+              <span class="contact-value">Remote or in person (Pakistan)</span>
+            </div>
+            <div class="contact-row">
+              <span class="contact-label">Response</span>
+              <span class="contact-value">Within 24 hours</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <span>© 2026 Dexterity Corporation — DexCo. All rights reserved.</span>
+    <span>Innovation begins here.</span>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-panel">
+    <div class="modal-topbar">
+      <button class="modal-back" id="modalBack">← Back to services</button>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-eyebrow">Service detail</div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-detail" id="modalDetail"></div>
+    <ul class="modal-items" id="modalItems"></ul>
+    <a href="#contact" data-link id="modalCta" class="btn btn-primary">Discuss this service →</a>
+  </div>
+</div>
+
+<script>
+  var services = [
+    {
+      id: "ai-ml", title: "AI &amp; Machine Learning",
+      summary: "Custom AI systems built for accuracy, privacy, and real production use — not demos.",
+      items: [
+        "Custom AI/LLM solutions &amp; RAG (Retrieval-Augmented Generation) systems",
+        "AI-powered chatbots &amp; knowledge assistants",
+        "Predictive analytics &amp; anomaly detection",
+        "Local/private LLM deployment for data-sensitive businesses"
+      ],
+      detail: "We design AI systems that answer from your actual data — policies, documents, transaction records — instead of guessing. For businesses handling sensitive information, we deploy models locally so nothing leaves your infrastructure. This is the same class of system built and running in production inside one of Pakistan's largest banks."
+    },
+    {
+      id: "automation", title: "Automation",
+      summary: "Turn repetitive manual work into automated pipelines that run themselves.",
+      items: [
+        "Robotic Process Automation (RPA) for repetitive workflows",
+        "Workflow digitization — manual processes to automated pipelines",
+        "Data extraction, ETL pipelines &amp; report automation"
+      ],
+      detail: "If your team is copy-pasting between spreadsheets, re-entering the same data across systems, or manually generating the same report every week, that's an automation problem, not a headcount problem. We build RPA and ETL pipelines that handle it end-to-end, with proper exception handling so it doesn't silently break."
+    },
+    {
+      id: "software", title: "Custom Software Development",
+      summary: "Web, desktop, and cloud applications built around how your business actually works.",
+      items: [
+        "Web &amp; desktop application development",
+        "Business dashboards &amp; analytics platforms (Plotly, Power BI, Tableau)",
+        "Database design &amp; development",
+        "Cloud application development &amp; deployment"
+      ],
+      detail: "Off-the-shelf software forces your process to fit the tool. We build the reverse — applications and dashboards shaped around your existing workflow, backed by a properly designed database, and deployed wherever makes sense for you: cloud, on-premise, or hybrid."
+    },
+    {
+      id: "analytics", title: "Business &amp; Financial Analytics",
+      summary: "Clear, real-time visibility into where your money is going and why.",
+      items: [
+        "Financial analysis &amp; budget-vs-actual reporting",
+        "KPI dashboards for decision-making",
+        "Audit &amp; compliance analytics"
+      ],
+      detail: "Most businesses don't lack data — they lack a clear view of it. We build dashboards that turn messy exports (Excel, POS systems, accounting software) into live KPI views, budget-vs-actual tracking, and anomaly flags, so decisions are based on what's actually happening, not last month's spreadsheet."
+    },
+    {
+      id: "consulting", title: "Consulting",
+      summary: "Strategic and hands-on support for teams navigating digital transformation.",
+      items: [
+        "IT consulting &amp; digital transformation strategy",
+        "Project management for tech implementation",
+        "Technical support &amp; documentation"
+      ],
+      detail: "Not every problem needs a build from scratch — sometimes it needs a clear-eyed technical roadmap, a project manager who can speak to both engineers and stakeholders, or documentation that makes a system maintainable after we hand it off. We offer that as standalone support too."
+    }
+  ];
+
+  // Render services list
+  var listEl = document.getElementById('servicesList');
+  services.forEach(function(s){
+    var el = document.createElement('button');
+    el.className = 'component';
+    el.setAttribute('data-service', s.id);
+    el.innerHTML =
+      '<div class="component-body">' +
+        '<div class="component-title">' + s.title + '</div>' +
+        '<div class="component-desc">' + s.summary + '</div>' +
+        '<span class="view-link">View details →</span>' +
+      '</div>' +
+      '<div class="component-arrow">→</div>';
+    listEl.appendChild(el);
+  });
+
+  // Modal logic
+  var modalOverlay = document.getElementById('modalOverlay');
+  function openModal(id){
+    var s = services.filter(function(x){ return x.id === id; })[0];
+    if(!s) return;
+    document.getElementById('modalTitle').innerHTML = s.title;
+    document.getElementById('modalDetail').textContent = s.detail;
+    var itemsEl = document.getElementById('modalItems');
+    itemsEl.innerHTML = '';
+    s.items.forEach(function(item){
+      var li = document.createElement('li');
+      li.innerHTML = item;
+      itemsEl.appendChild(li);
+    });
+    modalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    modalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalBack').addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+  listEl.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-service]');
+    if(btn) openModal(btn.getAttribute('data-service'));
+  });
+  document.getElementById('modalCta').addEventListener('click', closeModal);
+
+  // Router
+  var routes = ['home','services','why','contact'];
+  function navigate(){
+    var hash = (window.location.hash || '#home').replace('#','');
+    if(routes.indexOf(hash) === -1) hash = 'home';
+    routes.forEach(function(r){
+      document.getElementById('page-' + r).classList.toggle('active', r === hash);
+    });
+    document.querySelectorAll('.nav-links a[data-route]').forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('data-route') === hash);
+    });
+    window.scrollTo(0,0);
+    document.getElementById('navLinks').classList.remove('open');
+  }
+  window.addEventListener('hashchange', navigate);
+  navigate();
+
+  // Mobile nav toggle
+  document.getElementById('navToggle').addEventListener('click', function(){
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+</script>
+
+</body>
+</html>
